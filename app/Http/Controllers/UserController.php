@@ -34,7 +34,7 @@ class UserController extends Controller
             return response()->json([
                 'status' => false,
                 'message' => 'User not authenticated'
-            ]);
+            ], 400);
         }
 
         return response()->json([
@@ -56,7 +56,7 @@ class UserController extends Controller
             return response()->json([
                 'status' => false,
                 'message' => 'Invalid login credentials'
-            ]);
+            ], 400);
         }
 
         return response()->json([
@@ -76,22 +76,25 @@ class UserController extends Controller
         ]);
     }
 
-    public function get_user_from_id(int $user_id)
+    public function get_user_from_id(int $user_id=0)
     {
-        $user = User::find($user_id);
-
+        if($user_id != 0)
+        {
+            $user = User::find($user_id);
+        } else {
+            $user = User::all();
+        }
         if(!$user)
         {
             return response()->json([
                 'status' => false,
                 'message' => 'User not found'
-            ]);
+            ], 400);
         }
-
         return response()->json([
             'status' => true,
-            'message' => 'User listed successfully',
+            'message' => 'User found',
             'data' => $user
-        ]);
+        ]); 
     }
 }

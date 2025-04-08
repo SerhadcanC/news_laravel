@@ -17,9 +17,7 @@ Route::group(['prefix' => 'api'], function() {
         Route::get('get', [UserController::class, 'get_user']);
         Route::post('login', [UserController::class, 'login']);
         Route::get('logout', [UserController::class, 'logout']);
-        Route::prefix('get')->group(function() {
-            Route::get('{user_id}', [UserController::class, 'get_user_by_id']);
-        });
+        Route::get('get_user/{id?}', [UserController::class, 'get_user_from_id']);
     });
 
     Route::prefix('category')->group(function() {
@@ -48,7 +46,9 @@ Route::group(['prefix' => 'api'], function() {
 
     Route::prefix('image')->group(function() {
         Route::post('create_temp_url', [ImageController::class, 'create_temp_url']);
-        Route::post('download', [ImageController::class, 'download'])->name('files.download');
+        Route::get('download', [ImageController::class, 'download'])->name('file.download');
         Route::post('upload', [ImageController::class, 'upload']);
+        Route::post('get', [ImageController::class, 'find_by_name']);
+        Route::post('delete', [ImageController::class, 'delete_image']);
     });
 });

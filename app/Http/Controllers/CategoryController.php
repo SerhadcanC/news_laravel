@@ -7,7 +7,6 @@ use App\Models\Category;
 use App\Models\Image;
 use App\Http\Requests\CreateCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
-use App\Http\Requests\DeleteCategoryRequest;
 
 class CategoryController extends Controller
 {
