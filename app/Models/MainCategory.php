@@ -10,7 +10,7 @@ class MainCategory extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $table = 'main_category';
+    protected $table = 'main_categories';
 
     protected $fillable =
     [

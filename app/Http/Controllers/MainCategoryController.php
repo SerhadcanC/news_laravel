@@ -5,22 +5,20 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\MainCategory;
 use App\Models\Image;
+use App\Repositories\MainCategoryRepository;
 
 class MainCategoryController extends Controller
 {
-    public function get_main_categories(int $id=0)
+    protected $mainCategoryRepository;
+    
+    public function __construct(MainCategoryRepository $mainCategoryRepository)
     {
-        if($id!=0)
-        {
-            $main_category = MainCategory::find($id);
-        } else {
-            $main_category = MainCategory::all();
-        }
-        return response()->json([
-            'status' => true,
-            'message' => 'Main categories listed successfully',
-            'data' => $main_category
-        ], 400);
+        $this->mainCategoryRepository = $mainCategoryRepository;
+    }
+
+    public function get_main_categories(int $id)
+    {
+        return $this->mainCategoryRepository->findOrAll($id);
     }
 
     public function create_main_category(Request $request)

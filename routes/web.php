@@ -6,10 +6,11 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\MainCategoryController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\NewsController;
+use App\Http\Controllers\MailController;
 
 Route::get('/', function () {
     return view('welcome');
-});
+})->name('welcome');
 
 Route::group(['prefix' => 'api'], function() {
     Route::prefix('user')->group(function() {
@@ -23,9 +24,7 @@ Route::group(['prefix' => 'api'], function() {
     Route::prefix('category')->group(function() {
         Route::get('get/{id?}', [CategoryController::class, 'get_categories']);
         Route::post('create', [CategoryController::class, 'create_category']);
-        Route::post('update{id}', [CategoryController::class, 'update_category']);
-        Route::post('update/main-category/{id}', [CategoryController::class, 'update_main_category']);
-        Route::post('update/image/{id}', [CategoryController::class, 'update_image']);
+        Route::post('update/{id}', [CategoryController::class, 'update_category']);
         Route::post('delete/{id}', [CategoryController::class, 'delete_category']);
     });
 
@@ -50,5 +49,9 @@ Route::group(['prefix' => 'api'], function() {
         Route::post('upload', [ImageController::class, 'upload']);
         Route::post('get', [ImageController::class, 'find_by_name']);
         Route::post('delete', [ImageController::class, 'delete_image']);
+    });
+
+    Route::prefix('mail')->group (function() {
+        Route::post('send', [MailController::class, 'send_mail']);
     });
 });

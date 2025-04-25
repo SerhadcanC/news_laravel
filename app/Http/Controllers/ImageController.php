@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Repositories\ImageRepository;
 use Illuminate\Http\Request;
 use App\Http\Requests\UploadRequest;
 use App\Models\Image;
@@ -11,11 +12,13 @@ use Illuminate\Support\Facades\Storage;
 
 class ImageController extends Controller
 {
+    protected $imageRepository;
     private $disk_name = 'public';
     private $disk = null;
-    public function __construct()
+    public function __construct(ImageRepository $imageRepository)
     {
         $this->disk = Storage::disk($this->disk_name);
+        $this->imageRepository = $imageRepository;
     }
 
     public function create_temp_url(Request $request) 
@@ -60,68 +63,17 @@ class ImageController extends Controller
 
     public function find_by_name(ImageNameRequest $request)
     {
-        $images = Image::where('name', 'like', "%$request->name%")->get();
-        if($images->isEmpty())
-        {
-            return response()->json([
-                'status' => false,
-                'message' => 'Image not found',
-            ], 400);
-        }
-        return response()->json([
-            'status' => true,
-            'message' => 'Image found',
-            'path' => $images
-        ]);
+        return $this->imageRepository->find($request->name);
     }
 
     public function delete_image(ImageIdRequest $request)
     {
-        try
-        {
-            $image = Image::find($request->id);
-            if(!$image)
-            {
-                throw new \Exception('Image not found', 404);
-            }
-            $this->disk->delete($image->path);
-            $image->delete();
-            return response()->json([
-                'status' => true,
-                'message' => 'Image deleted successfully'
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => false,
-                'message' => $e->getMessage()
-            ], 500);
-        }
+        $this->imageRepository->delete($request->id);
     }
 
     public function update_image(ImageIdRequest $request)
     {
-        try
-        {
-            $image = Image::find($request->id);
-            if(!$image)
-            {
-                throw new \Exception('Image not found', 404);
-            }
-            $this->disk->delete($image->path);
-            $path = $request->file('file')->store("uploads/images", $this->disk_name);
-            $image->path = $path;
-            $image->save();
-            return response()->json([
-                'status' => true,
-                'message' => 'Image updated successfully',
-                'path' => $path
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => false,
-                'message' => $e->getMessage()
-            ], 500);
-        }
+        $this->imageRepository->update($request->id, $request->all());
     }
 
 }
